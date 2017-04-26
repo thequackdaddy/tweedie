@@ -26,16 +26,16 @@ before_install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -q -n tweedie_test python=$TRAVIS_PYTHON_VERSION coverage pytest pip pytest-cov numpy${NUMPY_VER} scipy${SCIPY_VER}
+  - conda create -q -n tweedie_test python=$TRAVIS_PYTHON_VERSION pytest pytest-cov pip numpy${NUMPY_VER} scipy${SCIPY_VER}
   - source activate tweedie_test
+  - pip install codecov
 
 install:
   - python setup.py develop
 script:
-  - py.test --doctest-modules tweedie
+  - py.test tweedie --doctest-modules --cov=tweedie -v
 # notifications:
 #   email:
 #   - me@me.com
 after_success:
-  - pip install codecov
-#   - codecov
+  - codecov
