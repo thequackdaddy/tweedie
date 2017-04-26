@@ -1,3 +1,5 @@
+from __future__ import division
+
 import numpy as np
 from scipy.stats import rv_continuous, poisson, gamma, invgauss, norm
 from scipy.special import gammaln
@@ -47,17 +49,17 @@ class tweedie_gen(rv_continuous):
 
         The density can be found using the pdf method.
 
-        >>> round(tweedie(p=1.5, mu=1, phi=1).pdf(1), 3)
-        0.358
+        >>> tweedie(p=1.5, mu=1, phi=1).pdf(1) # doctest:+ELLIPSIS
+        0.357...
 
         The cdf can be found using the cdf method.
 
-        >>> round(tweedie(p=1.5, mu=1, phi=1).cdf(1), 3)
-        0.604
+        >>> tweedie(p=1.5, mu=1, phi=1).cdf(1) # doctest:+ELLIPSIS
+        0.603...
 
         The ppf can be found using the ppf method.
-        >>> round(tweedie(p=1.5, mu=1, phi=1).ppf(0.60350096061199332), 2)
-        1.0
+        >>> tweedie(p=1.5, mu=1, phi=1).ppf(0.603) # doctest:+ELLIPSIS
+        0.998...
 
     References
     ----------

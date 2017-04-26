@@ -4,6 +4,8 @@ Created on Sat Apr 22 15:10:39 2017
 
 @author: pquackenbush
 """
+from __future__ import division
+
 import pytest
 import numpy as np
 from numpy.testing import assert_allclose
