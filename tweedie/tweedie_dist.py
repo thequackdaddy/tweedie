@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import rv_continuous, poisson, gamma, invgauss, norm
 from scipy.special import gammaln
+from scipy import optimize
 
 __all__ = ['tweedie_gen', 'tweedie']
 
@@ -38,20 +39,25 @@ class tweedie_gen(rv_continuous):
 
     Additionally, the R package `tweedie` also incorporates a (potentially)
     faster method that involves a Fourier inversion. This method is harder
-    to understand, so I've not implemented it. However, others should feel free 
+    to understand, so I've not implemented it. However, others should feel free
+    to attempt to add this themselves.
 
     Examples
     --------
 
         The density can be found using the pdf method.
 
-        >>> tweedie(p=1.5, mu=1, phi=1).pdf(1)
-        0.35750167900487062
+        >>> round(tweedie(p=1.5, mu=1, phi=1).pdf(1), 3)
+        0.358
 
         The cdf can be found using the cdf method.
 
-        >>> tweedie(p=1.5, mu=1, phi=1).cdf(1)
-        0.60350096061199332
+        >>> round(tweedie(p=1.5, mu=1, phi=1).cdf(1), 3)
+        0.604
+
+        The ppf can be found using the ppf method.
+        >>> round(tweedie(p=1.5, mu=1, phi=1).ppf(0.60350096061199332), 2)
+        1.0
 
     References
     ----------
@@ -94,6 +100,71 @@ class tweedie_gen(rv_continuous):
         rvs2 = np.zeros(N.shape, dtype=rvs.dtype)
         rvs2[mask] = rvs
         return rvs2
+
+    def _ppf_single1to2(self, q, p, mu, phi, left, right):
+        args = p, mu, phi
+
+        factor = 10.
+        while self._ppf_to_solve(left, q, *args) > 0.:
+            right = left
+            left /= factor
+            # left is now such that cdf(left) < q
+
+        while self._ppf_to_solve(right, q, *args) < 0.:
+            left = right
+            right *= factor
+            # right is now such that cdf(right) > q
+
+        return optimize.brentq(self._ppf_to_solve,
+                               left, right, args=(q,)+args, xtol=self.xtol)
+
+    def _ppf(self, q, p, mu, phi):
+        single1to2v = np.vectorize(self._ppf_single1to2, otypes='d')
+
+        ppf = np.zeros(q.shape, dtype=float)
+
+        # Gaussian
+        mask = p == 0
+        if sum(mask) > 0:
+            ppf[mask] = norm(loc=mu[mask],
+                             scale=np.sqrt(phi[mask])).ppf(q[mask])
+
+        # Poisson
+        mask = p == 1
+        if sum(mask) > 0:
+            ppf[mask] = poisson(mu=mu[mask] / phi[mask]).ppf(q[mask])
+
+        # 1 < p < 2
+        mask = (1 < p) & (p < 2)
+        if sum(mask) > 0:
+            zero_mass = np.zeros_like(ppf)
+            zeros = np.zeros_like(ppf)
+            zero_mass[mask] = self._cdf(zeros[mask], p[mask], mu[mask],
+                                        phi[mask])
+            right = 10 * mu * phi ** p
+            cond1 = mask
+            cond2 = q > zero_mass
+            if sum(cond1 & ~cond2) > 0:
+                ppf[cond1 & ~cond2] = zeros[cond1 & ~cond2]
+            if sum(cond1 & cond2) > 0:
+                single1to2v = np.vectorize(self._ppf_single1to2, otypes='d')
+                mask = cond1 & cond2
+                ppf[mask] = single1to2v(q[mask], p[mask], mu[mask],
+                                        phi[mask], zero_mass[mask],
+                                        right[mask])
+
+        # Gamma
+        mask = p == 2
+        if sum(mask) > 0:
+            ppf[mask] = gamma(a=1/phi[mask],
+                              scale=phi[mask] * mu[mask]).ppf(q[mask])
+
+        # Inverse Gamma
+        mask = p == 3
+        if sum(mask) > 0:
+            ppf[mask] = invgauss(mu=mu[mask] * phi[mask],
+                                 scale=1 / phi[mask]).ppf(q[mask])
+        return ppf
 
     def _argcheck(self, p, mu, phi):
         cond1 = (p == 0) | (p >= 1)
@@ -376,7 +447,7 @@ def estimate_tweeide_logcdf_series(x, mu, phi, p):
     # Poisson
     mask = p == 1.
     if sum(mask) > 0:
-        logcdf[mask] = poisson(mu=mu[mask] / phi[mask]).logcdf(x[mask])
+        logcdf[mask] = np.log(poisson(mu=mu[mask] / phi[mask]).cdf(x[mask]))
 
     # 1 < p < 2
     mask = (1 < p) & (p < 2)

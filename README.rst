@@ -1,6 +1,11 @@
 tweedie is a Python library implementing scipy's ``rv_continuous`` class
 for the Tweedie family. The Tweedie family is a member of the exponential
-dispersion model family and is commonly
+dispersion model family and is commonly used in the insurance indsutry
+to model losses on policies.
+
+The main focus of this package is the compound-Poisson behavior,
+specifically where :math:`1 < p < 2`. However, it should theoretically
+be possible to all the possible values of p.
 
 .. image:: https://travis-ci.org/thequackdaddy/tweedie.png?branch=master
    :target: https://travis-ci.org/thequackdaddy/tweedie
