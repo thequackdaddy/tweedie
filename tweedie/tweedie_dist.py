@@ -350,9 +350,8 @@ def ll_1to2(x, mu, phi, p):
 
     logWmax = np.max(logW, axis=1)
     w = np.exp(logW - logWmax[:, np.newaxis]).sum(axis=1)
-    W = np.exp(logWmax + np.log(w))
 
-    return (np.log(W / x) + (((x * theta) - kappa) / phi))
+    return (logWmax + np.log(w) - np.log(x) + (((x * theta) - kappa) / phi))
 
 
 def ll_2orMore(x, mu, phi, p):
