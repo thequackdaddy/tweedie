@@ -22,7 +22,5 @@ setup(name='tweedie',
       # install_requires=install_requires(),
       # extras_require=extras_require(),
       long_description=read('README.rst'),
-      # package_data={'odo': package_data},
       zip_safe=False,
-      # scripts=[os.path.join('bin', 'odo')],
       )

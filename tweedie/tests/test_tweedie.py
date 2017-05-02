@@ -4,6 +4,9 @@ Created on Sat Apr 22 15:10:39 2017
 
 @author: pquackenbush
 """
+from __future__ import division
+
+import pytest
 import numpy as np
 from numpy.testing import assert_allclose
 from tweedie import tweedie
@@ -80,21 +83,37 @@ def test_rvs_smoke():
     assert_allclose(rvs1, rvs2)
 
 
-def test_mean_close():
-    from itertools import product
-    mus = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    ps = [1.3, 1.5, 1.7]
-    phis = [1, 2, 3]
-    for mu, p, phi in product(mus, ps, phis):
-        rvs = tweedie(mu=mu, p=p, phi=phi).rvs(10000, random_state=42)
-        assert_allclose(mu, rvs.mean(), rtol=.05)
+@pytest.mark.parametrize('mu', [1, 5, 10])
+@pytest.mark.parametrize('p', [0, 1, 1.5, 2, 3])
+@pytest.mark.parametrize('phi', [1, 5, 10])
+def test_mean_close(mu, p, phi):
+    if (p <= 1) | (p >= 2):
+        pytest.xfail('Do I want to program this?')
+    rvs = tweedie(mu=mu, p=p, phi=phi).rvs(10000, random_state=42)
+    assert_allclose(mu, rvs.mean(), rtol=.05)
 
 
-def test_variance_close():
-    from itertools import product
-    mus = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    ps = [1.3, 1.5, 1.7]
-    phis = [1, 2, 3]
-    for mu, p, phi in product(mus, ps, phis):
-        rvs = tweedie(mu=mu, p=p, phi=phi).rvs(10000, random_state=42)
-        assert_allclose(phi * mu ** p, rvs.var(), rtol=.1)
+@pytest.mark.parametrize('mu', [1, 5, 10])
+@pytest.mark.parametrize('p', [0, 1, 1.5, 2, 3])
+@pytest.mark.parametrize('phi', [1, 5, 10])
+def test_variance_close(mu, p, phi):
+    if (p <= 1) | (p >= 2):
+        pytest.xfail('Do I want to program this?')
+    rvs = tweedie(mu=mu, p=p, phi=phi).rvs(10000, random_state=42)
+    assert_allclose(phi * mu ** p, rvs.var(), rtol=.1)
+
+
+@pytest.mark.parametrize('mu', [1, 5, 10])
+@pytest.mark.parametrize('p', [0, 1, 1.5, 2, 3])
+@pytest.mark.parametrize('phi', [1, 5, 10])
+def test_cdf_to_ppf(mu, p, phi):
+    if (p == 1) and (mu == 10) and (phi == 1):
+        pytest.xfail('Lose of precision here')
+    if (p >= 1) & (p < 2):
+        x = np.arange(0, 2 * mu, mu / 10)
+    else:
+        x = np.arange(0.1, 2 * mu, mu / 10)
+    qs = tweedie(mu=mu, p=p, phi=phi).cdf(x)
+    ys = tweedie(mu=mu, p=p, phi=phi).ppf(qs)
+    xs = tweedie(mu=mu, p=p, phi=phi).cdf(ys)
+    assert_allclose(qs, xs)

@@ -1,0 +1,14 @@
+[run]
+branch=True
+omit = 
+    */tests/*
+    tweedie/_version.py
+
+[report]
+exclude_lines =
+  pragma: no cover
+  ^def test_
+precision = 1
+
+[html]
+directory = coverage_html_report
