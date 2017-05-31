@@ -19,8 +19,6 @@ setup(name='tweedie',
       license='BSD',
       keywords='',
       packages=find_packages(),
-      # install_requires=install_requires(),
-      # extras_require=extras_require(),
       long_description=read('README.rst'),
       zip_safe=False,
       )
