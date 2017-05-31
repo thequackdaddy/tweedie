@@ -117,3 +117,10 @@ def test_cdf_to_ppf(mu, p, phi):
     ys = tweedie(mu=mu, p=p, phi=phi).ppf(qs)
     xs = tweedie(mu=mu, p=p, phi=phi).cdf(ys)
     assert_allclose(qs, xs)
+
+
+def test_extreme_nans():
+    y = tweedie(mu=1, p=1.02, phi=1.02).pdf(30)
+    assert np.isfinite(y)
+    y = tweedie(mu=1, p=1.02, phi=1.02).cdf(30)
+    assert np.isfinite(y)
