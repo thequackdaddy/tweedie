@@ -2,7 +2,7 @@ from __future__ import division
 
 import numpy as np
 from scipy.stats import rv_continuous, poisson, gamma, invgauss, norm
-from scipy.special import gammaln
+from scipy.special import gammaln, gammainc
 from scipy import optimize
 
 __all__ = ['tweedie_gen', 'tweedie']
@@ -491,13 +491,14 @@ def logcdf_1to2(x, mu, phi, p):
     rate = est_kappa(mu, p) / phi
     scale = est_gamma(phi, p, mu)
     shape = -est_alpha(p)
-    W = poisson.logpmf(0, rate).reshape(-1, 1)
+    W = -rate.reshape(-1, 1)
 
     i = 0
     while True:
         i += 1
-        trial = poisson(mu=rate).logpmf(i)
-        trial += gamma(a=i * shape, scale=scale).logcdf(x)
+        trial = i * np.log(rate) - rate - gammaln(i + 1)
+        # trial += gamma(a=i * shape, scale=scale).logcdf(x)
+        trial += np.log(gammainc(i * shape, x / scale))
         W = np.hstack((W, trial.reshape(-1, 1)))
 
         if (np.all(W[:, :-1].max(axis=1) - W[:, -1] > 37) &
