@@ -98,7 +98,7 @@ class tweedie_gen(rv_continuous):
 
         rvs = gamma(
                 a=N[mask] * shape,
-                scale=scale).rvs(size=sum(mask), random_state=rndm)
+                scale=scale).rvs(size=np.sum(mask), random_state=rndm)
         rvs2 = np.zeros(N.shape, dtype=rvs.dtype)
         rvs2[mask] = rvs
         return rvs2
