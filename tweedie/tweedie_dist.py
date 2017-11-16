@@ -127,18 +127,18 @@ class tweedie_gen(rv_continuous):
 
         # Gaussian
         mask = p == 0
-        if sum(mask) > 0:
+        if np.sum(mask) > 0:
             ppf[mask] = norm(loc=mu[mask],
                              scale=np.sqrt(phi[mask])).ppf(q[mask])
 
         # Poisson
         mask = p == 1
-        if sum(mask) > 0:
+        if np.sum(mask) > 0:
             ppf[mask] = poisson(mu=mu[mask] / phi[mask]).ppf(q[mask])
 
         # 1 < p < 2
         mask = (1 < p) & (p < 2)
-        if sum(mask) > 0:
+        if np.sum(mask) > 0:
             zero_mass = np.zeros_like(ppf)
             zeros = np.zeros_like(ppf)
             zero_mass[mask] = self._cdf(zeros[mask], p[mask], mu[mask],
@@ -146,9 +146,9 @@ class tweedie_gen(rv_continuous):
             right = 10 * mu * phi ** p
             cond1 = mask
             cond2 = q > zero_mass
-            if sum(cond1 & ~cond2) > 0:
+            if np.sum(cond1 & ~cond2) > 0:
                 ppf[cond1 & ~cond2] = zeros[cond1 & ~cond2]
-            if sum(cond1 & cond2) > 0:
+            if np.sum(cond1 & cond2) > 0:
                 single1to2v = np.vectorize(self._ppf_single1to2, otypes='d')
                 mask = cond1 & cond2
                 ppf[mask] = single1to2v(q[mask], p[mask], mu[mask],
@@ -157,13 +157,13 @@ class tweedie_gen(rv_continuous):
 
         # Gamma
         mask = p == 2
-        if sum(mask) > 0:
+        if np.sum(mask) > 0:
             ppf[mask] = gamma(a=1/phi[mask],
                               scale=phi[mask] * mu[mask]).ppf(q[mask])
 
         # Inverse Gamma
         mask = p == 3
-        if sum(mask) > 0:
+        if np.sum(mask) > 0:
             ppf[mask] = invgauss(mu=mu[mask] * phi[mask],
                                  scale=1 / phi[mask]).ppf(q[mask])
         return ppf
@@ -246,14 +246,14 @@ def estimate_tweedie_loglike_series(x, mu, phi, p):
 
     # Gaussian (Normal)
     gaussian_mask = p == 0.
-    if sum(gaussian_mask) > 0:
+    if np.sum(gaussian_mask) > 0:
         ll[gaussian_mask] = norm(
                 loc=mu[gaussian_mask],
                 scale=np.sqrt(phi[gaussian_mask])).logpdf(x[gaussian_mask])
 
     # Poisson
     poisson_mask = p == 1.
-    if sum(poisson_mask) > 0:
+    if np.sum(poisson_mask) > 0:
         poisson_pdf = poisson(
                 mu=mu[poisson_mask] / phi[poisson_mask]).pmf(
                 x[poisson_mask] / phi[poisson_mask]) / phi[poisson_mask]
@@ -261,7 +261,7 @@ def estimate_tweedie_loglike_series(x, mu, phi, p):
 
     # 1 < p < 2
     ll_1to_2_mask = (1 < p) & (p < 2)
-    if sum(ll_1to_2_mask) > 0:
+    if np.sum(ll_1to_2_mask) > 0:
         # Calculating logliklihood at x == 0 is pretty straightforward
         zeros = x == 0
         mask = zeros & ll_1to_2_mask
@@ -271,12 +271,12 @@ def estimate_tweedie_loglike_series(x, mu, phi, p):
 
     # Gamma
     gamma_mask = p == 2
-    if sum(gamma_mask) > 0:
+    if np.sum(gamma_mask) > 0:
         ll[gamma_mask] = gamma(a=1/phi, scale=phi * mu).logpdf(x[gamma_mask])
 
     # (2 < p < 3) or (p > 3)
     ll_2plus_mask = ((2 < p) & (p < 3)) | (p > 3)
-    if sum(ll_2plus_mask) > 0:
+    if np.sum(ll_2plus_mask) > 0:
         zeros = x == 0
         mask = zeros & ll_2plus_mask
         ll[mask] = -np.inf
@@ -285,7 +285,7 @@ def estimate_tweedie_loglike_series(x, mu, phi, p):
 
     # Inverse Gaussian (Normal)
     invgauss_mask = p == 3
-    if sum(invgauss_mask) > 0:
+    if np.sum(invgauss_mask) > 0:
         cond1 = invgauss_mask
         cond2 = x > 0
         mask = cond1 & cond2
@@ -441,18 +441,18 @@ def estimate_tweeide_logcdf_series(x, mu, phi, p):
 
     # Gaussian (Normal)
     mask = p == 0
-    if sum(mask) > 0:
+    if np.sum(mask) > 0:
         logcdf[mask] = norm(loc=mu[mask],
                             scale=np.sqrt(phi[mask])).logcdf(x[mask])
 
     # Poisson
     mask = p == 1.
-    if sum(mask) > 0:
+    if np.sum(mask) > 0:
         logcdf[mask] = np.log(poisson(mu=mu[mask] / phi[mask]).cdf(x[mask]))
 
     # 1 < p < 2
     mask = (1 < p) & (p < 2)
-    if sum(mask) > 0:
+    if np.sum(mask) > 0:
         cond1 = mask
         cond2 = x > 0
         mask = cond1 & cond2
@@ -463,13 +463,13 @@ def estimate_tweeide_logcdf_series(x, mu, phi, p):
 
     # Gamma
     mask = p == 2
-    if sum(mask) > 0:
+    if np.sum(mask) > 0:
         logcdf[mask] = gamma(a=1/phi[mask],
                              scale=phi[mask] * mu[mask]).logcdf(x[mask])
 
     # Inverse Gaussian (Normal)
     mask = p == 3
-    if sum(mask) > 0:
+    if np.sum(mask) > 0:
         logcdf[mask] = invgauss(mu=mu[mask] * phi[mask],
                                 scale=1 / phi[mask]).logcdf(x[mask])
 
