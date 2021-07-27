@@ -27,10 +27,18 @@ Dependencies:
 
 Optional dependencies:
   * pytest: needed to run tests
+  * tox: needed to run tests against multiple python/scipy versions
 
 Install:
   At the moment, ``python setup.py install`` will work. I'll try to put this on
   pypi at some point in the future.
+
+Running the tests:
+
+To test against the current python version and scipy `pytest ./tweedie`
+
+To test against multiple python versions and scipy versions `tox -p all`.
+If you run in to issues with performance, just use `tox`.
 
 Code and bug tracker:
   https://github.com/thequackdaddy/tweedie
