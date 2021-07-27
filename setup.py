@@ -19,6 +19,7 @@ setup(name='tweedie',
       license='BSD',
       keywords='',
       packages=find_packages(),
+      install_requires=["scipy<1.7.0", "numpy"],
       long_description=read('README.rst'),
       zip_safe=False,
       )
