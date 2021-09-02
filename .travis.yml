@@ -1,6 +1,6 @@
 language: python
 
-matrix:
+jobs:
   include:
     - python: 2.7
       env:
