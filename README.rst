@@ -30,8 +30,7 @@ Optional dependencies:
   * tox: needed to run tests against multiple python/scipy versions
 
 Install:
-  At the moment, ``python setup.py install`` will work. I'll try to put this on
-  pypi at some point in the future.
+  To run tests against multiple python/scipy versions, install the package using ``pip install -e .[dev]``.
 
 Running the tests:
 
