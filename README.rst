@@ -7,8 +7,8 @@ The main focus of this package is the compound-Poisson behavior,
 specifically where :math:`1 < p < 2`. However, it should be possible to
 calculate the distribution for all the possible values of p.
 
-.. image:: https://travis-ci.org/thequackdaddy/tweedie.png?branch=master
-   :target: https://travis-ci.org/thequackdaddy/tweedie
+.. image:: https://app.travis-ci.com/thequackdaddy/tweedie.svg?branch=master
+   :target: https://app.travis-ci.com/thequackdaddy/tweedie
 
 .. image:: http://codecov.io/github/thequackdaddy/tweedie/coverage.svg?branch=master
    :target: http://codecov.io/github/thequackdaddy/tweedie?branch=master
