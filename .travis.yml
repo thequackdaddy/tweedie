@@ -8,16 +8,16 @@ jobs:
       - SCIPY_VER="=0.19"
     - python: 3.6
       env:
-      - NUMPY_VER=""
-      - SCIPY_VER=""
+      - NUMPY_VER="1.13"
+      - SCIPY_VER="=1.0.0"
     - python: 3.7
       env:
-      - NUMPY_VER=""
-      - SCIPY_VER=""
+      - NUMPY_VER="1.15"
+      - SCIPY_VER="1.2.0"
     - python: 3.8
       env:
-      - NUMPY_VER=""
-      - SCIPY_VER=""
+      - NUMPY_VER="1.17"
+      - SCIPY_VER="1.4.0"
     - python: 3.9
       env:
       - NUMPY_VER=""
