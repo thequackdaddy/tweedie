@@ -144,7 +144,13 @@ class tweedie_gen(rv_continuous):
         # Poisson
         mask = p == 1
         if np.sum(mask) > 0:
+            print("Calling poisson for the ppf")
+            print(f"Mask: {mask}")
+            print(f"Mu: {mu}")
+            print(f"Phi: {phi}")
+            print(f"q: {q}")
             ppf[mask] = poisson(mu=mu[mask] / phi[mask]).ppf(q[mask])
+            print(f"poisson(mu=mu[mask] / phi[mask]).ppf(q[mask]): {poisson(mu=mu[mask] / phi[mask]).ppf(q[mask])}")
 
         # 1 < p < 2
         mask = (1 < p) & (p < 2)
