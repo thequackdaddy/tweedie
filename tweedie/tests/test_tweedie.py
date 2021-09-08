@@ -103,7 +103,7 @@ def test_variance_close(mu, p, phi):
     assert_allclose(phi * mu ** p, rvs.var(), rtol=.1)
 
 
-@pytest.mark.parametrize('mu', [1, 4, 10])
+@pytest.mark.parametrize('mu', [1, 3, 10])
 @pytest.mark.parametrize('p', [0, 1, 1.5, 2, 3])
 @pytest.mark.parametrize('phi', [1, 5, 10])
 def test_cdf_to_ppf(mu, p, phi):
