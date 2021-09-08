@@ -104,17 +104,14 @@ def test_variance_close(mu, p, phi):
     assert_allclose(phi * mu ** p, rvs.var(), rtol=.1)
 
 
-# @pytest.mark.parametrize('mu', [1, 5, 10])
-# @pytest.mark.parametrize('p', [0, 1, 1.5, 2, 3])
-# @pytest.mark.parametrize('phi', [1, 5, 10])
-@pytest.mark.parametrize('mu', [5])
-@pytest.mark.parametrize('p', [1])
-@pytest.mark.parametrize('phi', [1])
+@pytest.mark.parametrize('mu', [1, 5, 10])
+@pytest.mark.parametrize('p', [0, 1, 1.5, 2, 3])
+@pytest.mark.parametrize('phi', [1, 5, 10])
 def test_cdf_to_ppf(mu, p, phi):
     if (p == 1) and (mu == 10) and (phi == 1):
         pytest.xfail('Lose of precision here')
     if (p >= 1) & (p < 2):
-        x = np.arange(0, 2 * mu, mu / 10)*1.01
+        x = np.arange(0.1, 2 * mu, mu / 10)*1.1
     else:
         x = np.arange(0.1, 2 * mu, mu / 10)
     qs = tweedie(mu=mu, p=p, phi=phi).cdf(x)
