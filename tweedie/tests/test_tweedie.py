@@ -11,6 +11,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 from tweedie import tweedie
 from results import test_ys, test_results, num_tests
+from scipy.stats import poisson
 
 
 def test_R_compat_density():
@@ -110,26 +111,14 @@ def test_cdf_to_ppf(mu, p, phi):
     if (p == 1) and (mu == 10) and (phi == 1):
         pytest.xfail('Lose of precision here')
     if (p >= 1) & (p < 2):
-        x = np.arange(0, 2 * mu, mu / 10)
+        from scipy.stats import poisson
+        quantiles = np.linspace(0.01, 0.99, 10)
+        x = poisson(mu=mu/phi).ppf(quantiles)
     else:
         x = np.arange(0.1, 2 * mu, mu / 10)
-    print("x:")
-    print(x)
-    print("mu:")
-    print(mu)
-    print("p:")
-    print(p)
-    print("phi:")
-    print(phi)
     qs = tweedie(mu=mu, p=p, phi=phi).cdf(x)
-    print("qs:")
-    print(qs)
     ys = tweedie(mu=mu, p=p, phi=phi).ppf(qs)
-    print("ys:")
-    print(ys)
     xs = tweedie(mu=mu, p=p, phi=phi).cdf(ys)
-    print("xs:")
-    print(xs)
     assert_allclose(qs, xs)
 
 
