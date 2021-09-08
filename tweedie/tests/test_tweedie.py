@@ -103,7 +103,7 @@ def test_variance_close(mu, p, phi):
     assert_allclose(phi * mu ** p, rvs.var(), rtol=.1)
 
 
-@pytest.mark.parametrize('mu', [1, 3, 10])
+@pytest.mark.parametrize('mu', [1, 5, 10])
 @pytest.mark.parametrize('p', [0, 1, 1.5, 2, 3])
 @pytest.mark.parametrize('phi', [1, 5, 10])
 def test_cdf_to_ppf(mu, p, phi):
@@ -113,9 +113,23 @@ def test_cdf_to_ppf(mu, p, phi):
         x = np.arange(0, 2 * mu, mu / 10)
     else:
         x = np.arange(0.1, 2 * mu, mu / 10)
+    print("x:")
+    print(x)
+    print("mu:")
+    print(mu)
+    print("p:")
+    print(p)
+    print("phi:")
+    print(phi)
     qs = tweedie(mu=mu, p=p, phi=phi).cdf(x)
+    print("qs:")
+    print(qs)
     ys = tweedie(mu=mu, p=p, phi=phi).ppf(qs)
+    print("ys:")
+    print(ys)
     xs = tweedie(mu=mu, p=p, phi=phi).cdf(ys)
+    print("xs:")
+    print(xs)
     assert_allclose(qs, xs)
 
 
