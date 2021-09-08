@@ -70,21 +70,21 @@ class tweedie_gen(rv_continuous):
     exponential dispersion model densities
     """
     def _pdf(self, x, p, mu, phi):
-        p = np.broadcast_to(p, x.shape)
-        mu = np.broadcast_to(mu, x.shape)
-        phi = np.broadcast_to(phi, x.shape)
         return np.exp(self._logpdf(x, p, mu, phi))
 
     def _logpdf(self, x, p, mu, phi):
-        return estimate_tweedie_loglike_series(x, mu, phi, p)
-
-    def _logcdf(self, x, p, mu, phi):
-        return estimate_tweeide_logcdf_series(x, mu, phi, p)
-
-    def _cdf(self, x, p, mu, phi):
         p = np.broadcast_to(p, x.shape)
         mu = np.broadcast_to(mu, x.shape)
         phi = np.broadcast_to(phi, x.shape)
+        return estimate_tweedie_loglike_series(x, mu, phi, p)
+
+    def _logcdf(self, x, p, mu, phi):
+        p = np.broadcast_to(p, x.shape)
+        mu = np.broadcast_to(mu, x.shape)
+        phi = np.broadcast_to(phi, x.shape)
+        return estimate_tweeide_logcdf_series(x, mu, phi, p)
+
+    def _cdf(self, x, p, mu, phi):
         return np.exp(self._logcdf(x, p, mu, phi))
 
     def _rvs(self, p, mu, phi):
