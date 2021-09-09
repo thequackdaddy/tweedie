@@ -108,7 +108,7 @@ def test_variance_close(mu, p, phi):
 @pytest.mark.parametrize('p', [0, 1, 1.5, 2, 3])
 @pytest.mark.parametrize('phi', [1, 5, 10])
 def test_cdf_to_ppf(mu, p, phi):
-    if (p == 1) and (mu == 10 or mu == 5) and (phi == 1):
+    if (p == 1) and (mu == 10) and (phi == 1):
         pytest.xfail('Lose of precision here')
     if (p >= 1) & (p < 2):
         x = np.arange(0.1, 2 * mu, mu / 10)*1.1
@@ -117,6 +117,13 @@ def test_cdf_to_ppf(mu, p, phi):
     qs = tweedie(mu=mu, p=p, phi=phi).cdf(x)
     ys = tweedie(mu=mu, p=p, phi=phi).ppf(qs)
     xs = tweedie(mu=mu, p=p, phi=phi).cdf(ys)
+    # this test case kept failing in one of the travis ci env (Diego: it would fine on my machine)
+    # most values match besides one or two. I suspect this happen due to some numeric rounding in
+    # one step of the calculation (e.g. 0.12346 would give one value but some very close like 0.1235 would
+    # give another mass point, and crash the test). this is very hard to reproduce, is it only happens in
+    # a specific env on the test suite
+    if (p == 1) and (mu == 5) and (phi == 1):
+        assert (qs == xs).sum() >= 19
     assert_allclose(qs, xs)
 
 
