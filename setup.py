@@ -19,6 +19,8 @@ setup(name='tweedie',
       license='BSD',
       keywords='',
       packages=find_packages(),
+      install_requires=['scipy', 'numpy'],
+      extras_require={'dev': ['pytest', 'tox']},
       long_description=read('README.rst'),
       zip_safe=False,
       )
