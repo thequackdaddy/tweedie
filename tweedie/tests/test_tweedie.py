@@ -6,12 +6,12 @@ Created on Sat Apr 22 15:10:39 2017
 """
 from __future__ import division
 
+from unittest import mock
 import pytest
 import numpy as np
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_equal
 from tweedie import tweedie
 from results import test_ys, test_results, num_tests
-from scipy.stats import poisson
 
 
 def test_R_compat_density():
@@ -126,6 +126,39 @@ def test_cdf_to_ppf(mu, p, phi):
         assert (qs == xs).sum() >= 18
     else:
         assert_allclose(qs, xs)
+
+# these tests basically verify that _logpdf and _logcdf broadcast the arguments
+# before calling the function that estimates the tweedie loglike and logcdf
+@mock.patch("tweedie.tweedie_dist.estimate_tweedie_loglike_series")
+def test_broadcasting_pdf(mock_estimate_tweedie):
+    x = np.array([1, 2, 3])
+    p = 1
+    mu = 2
+    phi = 3
+    # _logpdf calls estimate_tweedie_loglike_series behind the scenes...
+    tweedie._logpdf(x, p, mu, phi)
+    # these are the arguments used when calling estimate_tweedie_loglike_series, and they should be broadcast
+    x_call, mu_call, phi_call, p_call = mock_estimate_tweedie.call_args.args
+    assert_equal(x_call, x)
+    assert_equal(p_call, np.array([p, p, p]))
+    assert_equal(mu_call, np.array([mu, mu, mu]))
+    assert_equal(phi_call, np.array([phi, phi, phi]))
+
+
+@mock.patch("tweedie.tweedie_dist.estimate_tweeide_logcdf_series")
+def test_broadcasting_cdf(mock_estimate_tweedie):
+    x = np.array([1, 2, 3])
+    p = 1
+    mu = 2
+    phi = 3
+    # _logcdf calls estimate_tweeide_logcdf_series behind the scenes...
+    tweedie._logcdf(x, p, mu, phi)
+    # these are the arguments used when calling estimate_tweeide_logcdf_series, and they should be broadcast
+    x_call, mu_call, phi_call, p_call = mock_estimate_tweedie.call_args.args
+    assert_equal(x_call, x)
+    assert_equal(p_call, np.array([p, p, p]))
+    assert_equal(mu_call, np.array([mu, mu, mu]))
+    assert_equal(phi_call, np.array([phi, phi, phi]))
 
 
 def test_extreme_nans():
