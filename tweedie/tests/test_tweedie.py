@@ -124,7 +124,8 @@ def test_cdf_to_ppf(mu, p, phi):
     # a specific env on the test suite
     if (p == 1) and (mu == 5) and (phi == 1):
         assert (qs == xs).sum() >= 18
-    assert_allclose(qs, xs)
+    else:
+        assert_allclose(qs, xs)
 
 
 def test_extreme_nans():
