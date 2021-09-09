@@ -87,7 +87,11 @@ class tweedie_gen(rv_continuous):
     def _cdf(self, x, p, mu, phi):
         return np.exp(self._logcdf(x, p, mu, phi))
 
-    def _rvs(self, p, mu, phi, size, random_state):
+    def _rvs(self, p, mu, phi, size=None, random_state=None):
+        if size is None:
+            size = self._size
+        if random_state is None:
+            random_state = self._random_state
         p = np.array(p, ndmin=1)
         if not (p > 1).all() & (p < 2).all():
             raise ValueError('p only valid for 1 < p < 2')
