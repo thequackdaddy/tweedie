@@ -4,7 +4,7 @@ dispersion model family and is commonly used in the insurance indsutry
 to model claim amounts for insurance policies (exposure).
 
 The main focus of this package is the compound-Poisson behavior,
-specifically where :math:`1 < p < 2`. However, it should be possible to
+specifically where ``1 < p < 2``. However, it should be possible to
 calculate the distribution for all the possible values of p.
 
 .. image:: https://app.travis-ci.com/thequackdaddy/tweedie.svg?branch=master
@@ -34,10 +34,10 @@ Install:
 
 Running the tests:
 
-To test against the current python version and scipy `pytest ./tweedie`
+To test against the current python version and scipy ``pytest ./tweedie``
 
-To test against multiple python versions and scipy versions `tox -p all`.
-If you run in to issues with performance, just use `tox`.
+To test against multiple python versions and scipy versions ``tox -p all``.
+If you run in to issues with performance, just use ``tox``.
 
 Code and bug tracker:
   https://github.com/thequackdaddy/tweedie
