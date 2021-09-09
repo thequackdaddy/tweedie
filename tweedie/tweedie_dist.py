@@ -87,15 +87,18 @@ class tweedie_gen(rv_continuous):
     def _cdf(self, x, p, mu, phi):
         return np.exp(self._logcdf(x, p, mu, phi))
 
-    def _rvs(self, p, mu, phi):
+    def _rvs(self, p, mu, phi, size=None, random_state=None):
+        if size is None:
+            size = self._size
+        if random_state is None:
+            random_state = self._random_state
         p = np.array(p, ndmin=1)
         if not (p > 1).all() & (p < 2).all():
             raise ValueError('p only valid for 1 < p < 2')
-        size, rndm = self._size, self._random_state
         rate = est_kappa(mu, p) / phi
         scale = est_gamma(phi, p, mu)
         shape = -est_alpha(p)
-        N = poisson(rate).rvs(size=size, random_state=rndm)
+        N = poisson(rate).rvs(size=size, random_state=random_state)
         mask = N > 0
         if not np.isscalar(scale) and len(scale) == len(mask):
             scale = scale[mask]
@@ -104,7 +107,7 @@ class tweedie_gen(rv_continuous):
 
         rvs = gamma(
                 a=N[mask] * shape,
-                scale=scale).rvs(size=np.sum(mask), random_state=rndm)
+            scale=scale).rvs(size=np.sum(mask), random_state=random_state)
         rvs2 = np.zeros(N.shape, dtype=rvs.dtype)
         rvs2[mask] = rvs
         return rvs2
@@ -267,7 +270,10 @@ def estimate_tweedie_loglike_series(x, mu, phi, p):
         poisson_pdf = poisson(
                 mu=mu[poisson_mask] / phi[poisson_mask]).pmf(
                 x[poisson_mask] / phi[poisson_mask]) / phi[poisson_mask]
-        ll[poisson_mask] = np.log(poisson_pdf)
+        zero_mask = poisson_pdf != 0.
+        poisson_logpdf = ll[poisson_mask]
+        poisson_logpdf[zero_mask] = np.log(poisson_pdf[zero_mask])
+        ll[poisson_mask] = poisson_logpdf
 
     # 1 < p < 2
     ll_1to_2_mask = (1 < p) & (p < 2)
@@ -351,7 +357,7 @@ def ll_1to2(x, mu, phi, p):
         j -= 1
     j_low = np.ceil(j)
 
-    j = np.arange(j_low, j_hi + 1, dtype=np.float)
+    j = np.arange(j_low, j_hi + 1, dtype=np.float64)
     w1 = np.tile(j, (z.shape[0], 1))
 
     w1 *= np.log(z)[:, np.newaxis]
@@ -403,7 +409,7 @@ def ll_2orMore(x, mu, phi, p):
 
     k_lo = k
 
-    k = np.arange(k_lo, k_hi + 1, dtype=np.float)
+    k = np.arange(k_lo, k_hi + 1, dtype=np.float64)
     k = np.tile(k, (z.shape[0], 1))
     v1 = gammaln(1 + alpha[:, np.newaxis] * k)
     v1 += k * (alpha[:, np.newaxis] - 1) * np.log(phi[:, np.newaxis])
