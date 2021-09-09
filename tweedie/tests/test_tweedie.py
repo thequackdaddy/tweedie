@@ -123,7 +123,7 @@ def test_cdf_to_ppf(mu, p, phi):
     # give another mass point, and crash the test). this is very hard to reproduce, is it only happens in
     # a specific env on the test suite
     if (p == 1) and (mu == 5) and (phi == 1):
-        assert (qs == xs).sum() >= 19
+        assert (qs == xs).sum() >= 18
     assert_allclose(qs, xs)
 
 
