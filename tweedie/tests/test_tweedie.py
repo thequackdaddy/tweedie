@@ -114,10 +114,12 @@ def test_cdf_to_ppf(mu, p, phi):
         x = np.arange(0.1, 2 * mu, mu / 10)*1.1
     else:
         x = np.arange(0.1, 2 * mu, mu / 10)
-    qs = tweedie(mu=mu, p=p, phi=phi).cdf(x)
-    ys = tweedie(mu=mu, p=p, phi=phi).ppf(qs)
-    xs = tweedie(mu=mu, p=p, phi=phi).cdf(ys)
-    assert_allclose(qs, xs)
+    # qs = tweedie(mu=mu, p=p, phi=phi).cdf(x)
+    # ys = tweedie(mu=mu, p=p, phi=phi).ppf(qs)
+    # xs = tweedie(mu=mu, p=p, phi=phi).cdf(ys)
+    tw = tweedie(mu=mu, p=p, phi=phi)
+    assert_allclose(tw.cdf(x), tw.cdf(tw.ppf(tw.cdf(x))))
+    #assert_allclose(qs, xs)
 
 
 def test_extreme_nans():
