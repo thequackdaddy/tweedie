@@ -138,7 +138,7 @@ def test_broadcasting_pdf(mock_estimate_tweedie):
     # _logpdf calls estimate_tweedie_loglike_series behind the scenes...
     tweedie._logpdf(x, p, mu, phi)
     # these are the arguments used when calling estimate_tweedie_loglike_series, and they should be broadcast
-    x_call, mu_call, phi_call, p_call = mock_estimate_tweedie.call_args.args
+    (x_call, mu_call, phi_call, p_call), kwargs = mock_estimate_tweedie.call_args
     assert_equal(x_call, x)
     assert_equal(p_call, np.array([p, p, p]))
     assert_equal(mu_call, np.array([mu, mu, mu]))
@@ -154,7 +154,7 @@ def test_broadcasting_cdf(mock_estimate_tweedie):
     # _logcdf calls estimate_tweeide_logcdf_series behind the scenes...
     tweedie._logcdf(x, p, mu, phi)
     # these are the arguments used when calling estimate_tweeide_logcdf_series, and they should be broadcast
-    x_call, mu_call, phi_call, p_call = mock_estimate_tweedie.call_args.args
+    (x_call, mu_call, phi_call, p_call), kwargs = mock_estimate_tweedie.call_args
     assert_equal(x_call, x)
     assert_equal(p_call, np.array([p, p, p]))
     assert_equal(mu_call, np.array([mu, mu, mu]))
