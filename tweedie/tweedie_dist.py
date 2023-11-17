@@ -314,9 +314,9 @@ def estimate_tweedie_loglike_series(x, mu, phi, p):
 def ll_1to2(x, mu, phi, p):
     def est_z(x, phi, p):
         alpha = est_alpha(p)
-        numerator = x ** (-alpha) * (p - 1) ** alpha
-        denominator = phi ** (1 - alpha) * (2 - p)
-        return numerator / denominator
+        numerator = -alpha*np.log(x) + alpha*np.log(p - 1)
+        denominator = (1 - alpha)*np.log(phi) + np.log(2 - p)
+        return np.exp(numerator - denominator)
 
     if len(x) == 0:
         return 0
